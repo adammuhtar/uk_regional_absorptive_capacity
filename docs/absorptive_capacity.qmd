@@ -1,0 +1,2196 @@
+---
+title: "Regional Absorptive Capacity"
+subtitle: "The Role of UK Universities"
+author: "Stella Erker & Adam Muhtar"
+affiliation: "Bennett Institute for Public Policy, University of Cambridge"
+number-sections: true
+code-block-bg: true
+code-block-border-left: "#85B09A"
+format:
+    html:
+        theme:
+            light: flatly
+            dark: darkly
+        mainfont: sans-serif
+        monofont: "Cascadia Code"
+        code-fold: true
+        toc: true
+        toc-location: left
+---
+
+Building on 'Part 1' findings provided by Stella, this notebook consists of the following parts:
+
+1. An overview of the datasets used for this analysis.
+2. General regional and time-trends of annual unique job postings and investments into higher education (HE) spin-off activities
+3. Econometric analyses of the relationship these two trends using panel data regressions, using random effects, fixed effects, and first difference estimators.
+
+# Data
+## Royal Society-Emsi Burning Glass data pack
+The first source of data is provided by Royal Society Data Pack (procured from [Emsi Burning Glass](https://www.burning-glass.com/uk/)). Specifically, we focus on datasets relating to annual unique job postings for the period between 2016 and 2020 by 4-digit SOC for the UK, [NUTS 1](https://www.ons.gov.uk/methodology/geography/ukgeographies/eurostat) regions, and select NUTS 3 areas. The job postings are grouped according the the [Standard Occupational Classification (SOC)](https://www.ons.gov.uk/methodology/classificationsandstandards/standardoccupationalclassificationsoc). The SOC consists of nine major groups defined in terms of the general nature of the qualifications, training and experience associated with competent performance of tasks in the occupations classified within each major group:
+
+| SOC major group (1-digit level) | SOC sub-major group (2-digit level)|
+| ----------- | --------------------------------- |
+| **1** Managers, directors and senior officials | **11** Corporate managers and directors; **12** Other managers and proprietors |
+| **2** Professional occupations | **21** Science, research, engineering and technology professionals; **22** Health professionals; **23** Teaching and other educational professionals; **24** Business, media and public service professionals |
+| **3** Associate professional occupations | **31** Science, engineering and technology associate professionals; **32** Health and social care associate professionals; **33** Protective service occupations; **34** Culture, media and sports occupations; **35** Business and public service associate professionals |
+| **4** Administrative and secretarial occupations | **41** Administrative occupations; **42** Secretarial and related occupations |
+| **5** Skilled trades occupations | **51** Skilled agricultural and related trades; **52** Skilled metal, electrical and electronic trades; **53** Skilled construction and building trades; **54** Textiles, printing and other skilled trades |
+| **6** Caring, leisure and other service occupations | **61** Caring personal service occupations; **62** Leisure, travel and related personal service occupations; **63** Community and civil enforcement occupations |
+| **7** Sales and customer service occupation | **71** Sales occupations; **72** Customer service occupations |
+| **8** Process, plant and machine operatives | **81** Process, plant and machine operatives; **82** Transport and mobile machine drivers and operatives |
+| **9** Elementary occupations | **91** Elementary trades and related occupations; **92** Elementary administration and service occupations |
+: SOC major and sub-major groups (1- and 2-digit levels)
+
+## HESA Business and Community Interaction surveys
+Supplementing the Royal Society-Emsi Burning Glass data pack are statistics from the [Higher Education Statistics Agency (HESA)](https://www.hesa.ac.uk/data-and-analysis/) Business and Community Interaction survey datasets on intellectual property (IP); specifically [Table 4e - Intellectual property: Spin-off activities by HE provider 2014/15 to 2019/20](https://www.hesa.ac.uk/data-and-analysis/providers/business-community/table-4e). Start-ups and spin-offs here are defined as companies set-up to capitalise on IP that has originated from within the HE institution, and are categorised as follows:
+
+| Category | Definitions |
+| ----------- | --------------------------------- |
+| **Spin-offs with some HEP ownership** | Companies set-up to exploit IP that has originated from within the HE provider, where the HE provider continues to have some ownership. |
+| **Formal spin-offs, not HEP owned** | Companies set-up based on IP that has originated from within the HE provider but where the HE provider has released ownership (usually through the sale of shares and/or IP). |
+| **Staff start-ups** | Companies set-up by active (or recent) HE provider staff but not based on IP from the HE provider. |
+| **Graduate start-ups** | Includes all new business started by recent graduates (within two years) regardless of where any IP resides, but only where there has been formal business/enterprise support from the HE provider. |
+| **Social enterprises** | Includes all legal organisational structures including charities and all business structures.  Enterprise/ventures which are established to deliver products or services which bring about positive social change are reported. i.e. organisations that rate their success on their social outcomes equally or more than their commercial outcomes (only registered companies should be reported). |
+: HE spin-off categories and definitions
+
+## HESA Finances dataset
+Further supplementary datasets from HESA are the [HESA Finance](https://www.hesa.ac.uk/data-and-analysis/finances/releases) datasets based on consolidated statements of comprehensive income and expenditure by HE provider and academic year; specifically [Table 8 - Expenditure - breakdown by HE provider, activity, HESA cost centre and academic year 2015/16 to 2020/21](https://www.hesa.ac.uk/data-and-analysis/finances/table-8). HE expenditures are categorised as follows:
+
+| Category | Definitions |
+| ----------- | --------------------------------- |
+| **Academic departments** | This includes all expenditure incurred by or on behalf of academic departments (including departments of continuing education), and expenditure incurred in connection with special and short courses which is not reimbursable by research councils or other bodies in respect of work carried out on their behalf. |
+| **Academic services** | This includes expenditure incurred by centralised academic services such as the library and learning resource centres, central computers and computer networks (including maintenance and operating costs), expenditure on centrally run museums, galleries and observatories, and any other general academic services not covered elsewhere. |
+| **Administration and central services** | This includes expenditure incurred by central administration and services, general education expenditure, and staff and student facilities. |
+| **Premises** | This includes all expenditure incurred (whether centrally or departmentally) on the management of premises (including academic buildings, central academic services, art centres, HE provider’s health service premises, pavilions, sports buildings, etc.) and on roads and grounds, except residences and catering. |
+| **Residences and catering operations (including conferences)** | This includes the gross expenditure incurred in providing the residence, catering and any conference operations, including the cost of maintenance of residential and catering premises, salaries and any other identifiable costs relating to these operations. The depreciation costs and financing costs of these operations are included in the appropriate categories of expenditure. |
+| **Research grants and contracts** | This includes the total of the direct costs attributed to research grants and contracts from Research Councils sponsored by the Department for Business, Energy and Industrial Strategy (BEIS), The Royal Society, British Academy and The Royal Society of Edinburgh (e.g. Biotechnology and Biological Sciences Research Council (BBSRC), Medical Research Council (MRC), Natural Environment Research Council (NERC), Engineering and Physical Sciences Research Council (EPSRC), Economic and Social Research Council (ESRC), Arts and Humanities Research Council (AHRC), Science and Technology Facilities Council (STFC), and UK Research and Innovation (UKRI)). Other research grants and contracts are sourced from charities, central government bodies, local authorities, health and hospital authorities, Research Development Expenditure Credit Scheme (RDEC), industry, commerce, and public corporations.
+| **Other expenditure** | Includes **Pension cost adjustment**, i.e. any adjustment made to staff pension costs in the income and expenditure account (i.e. the difference between actual contributions made and current service cost figure), and **Other**, i.e. total direct costs attributed to other services rendered and all other expenditure not covered above. |
+: HE spin-off categories and definitions
+
+```{python}
+#| echo: false
+# If required, install latest versions of data science and markdown packages
+# pip install --upgrade numpy pandas openpyxl requests linearmodels statsmodels plotly nbformat nbclient
+"""
+===============================================================================
+Converting Royal Society-Emsi Burning Glass Data Pack into Pandas DataFrames
+===============================================================================
+"""
+import numpy as np              # linear algebra
+import pandas as pd             # data processing, CSV file I/O
+import requests                 # send HTTP request
+import os                       # interacting with operating system
+import warnings
+warnings.filterwarnings("ignore")
+
+
+# Defining sheet names to read as dataframes
+sheet = [
+         "Industry Profiles", "Industry GVA", "Industry Local Units",
+         "Industry Enterprises", "Occupation Profiles",
+         "Occupation Job Postings", "NUTS3 Industry Profiles",
+         "NUTS3 Industry GVA", "NUTS3 Industry Local Units",
+         "NUTS3 Industry Enterprises", "NUTS3 Occupation Profiles",
+         "NUTS3 Occupation Job Postings"
+]
+
+file_path = "c:\\Users\\mabm5\\Documents\\Projects\\Royal Society\\2021-07-09_Royal_Society_Initial_Data_Pack_V1.0.xlsx"
+
+
+# Reading Excel sheets as dataframes in dictionary
+df = {}
+for i in range(len(sheet)):
+    df[i] = pd.read_excel(file_path, sheet_name = sheet[i])
+
+
+# Fixing column headers for Occupation Job Postings sheets
+df[5].rename(columns = df[5].iloc[0], inplace = True)
+df[5] = df[5].drop(0)
+df[5] = df[5].reset_index(drop = True)
+df[5].rename(
+    columns = {
+        "SOC TIer":"SOC Tier", 2016.0:2016, 2017.0:2017, 2018.0:2018,
+        2019.0:2019, 2020.0:2020
+    }, inplace = True
+)
+
+df[11].rename(columns = df[11].iloc[0], inplace = True)
+df[11] = df[11].drop(0)
+df[11] = df[11].reset_index(drop = True)
+df[11].rename(
+    columns = {
+        2016.0:2016, 2017.0:2017, 2018.0:2018, 2019.0:2019, 2020.0:2020
+    }, inplace = True
+)
+
+
+
+"""
+===============================================================================
+Download supplementary HESA Business and Community Interaction survey datasets
+===============================================================================
+""" 
+# Create a new directory "csv_data"
+csv_dir = "c:\\Users\\mabm5\\Documents\\Projects\\Royal Society\\csv_data"   
+
+
+# # Define relevant HESA URL links and download CSV files
+# urls = [
+#         # 0: Income from collaborative research involving public funding by HE provider; 2015/16 to 2019/20
+#         "https://www.hesa.ac.uk/data-and-analysis/providers/business-community/table-1.csv",
+#         # 1: Business and community services by HE provider; 2014/15 to 2019/20
+#         "https://www.hesa.ac.uk/data-and-analysis/providers/business-community/table-2a.csv",
+#         # 2: Continuing Professional Development (CPD) and Continuing Education (CE) courses for business and the community by HE provider; 2014/15 to 2019/20
+#         "https://www.hesa.ac.uk/data-and-analysis/providers/business-community/table-2b.csv",
+#         # 3: Income from regeneration and development programmes by HE provider; 2014/15 to 2019/20
+#         "https://www.hesa.ac.uk/data-and-analysis/providers/business-community/table-3.csv",
+#         # 4: Intellectual property: Disclosures and patents filed by or on behalf of the HE provider; 2014/15 to 2019/20
+#         "https://www.hesa.ac.uk/data-and-analysis/providers/business-community/table-4a.csv",
+#         # 5: Intellectual property: Licence numbers (including patents, copyright, design, registration and trade marks) by HE provider; 2014/15 to 2019/20
+#         "https://www.hesa.ac.uk/data-and-analysis/providers/business-community/table-4b.csv",
+#         # 6: Intellectual property income (including patents, copyright, design, registration and trade marks) by HE provider; 2014/15 to 2019/20
+#         "https://www.hesa.ac.uk/data-and-analysis/providers/business-community/table-4c.csv",
+#         # 7: Total intellectual property income (including patents, copyright, design, registration and trade marks) by HE provider; 2014/15 to 2019/20
+#         "https://www.hesa.ac.uk/data-and-analysis/providers/business-community/table-4d.csv",
+#         # 8: Intellectual property: Spin-off activities by HE provider; 2014/15 to 2019/20
+#         "https://www.hesa.ac.uk/data-and-analysis/providers/business-community/table-4e.csv",
+#         # 9: Strategies, approaches and infrastructures by HE provider; 2015/16 to 2019/20
+#         "https://www.hesa.ac.uk/data-and-analysis/providers/business-community/table-a.csv",
+#         # Expenditure - breakdown by activity and HESA cost centre; 2014/15 to 2020/21
+#         # "https://www.hesa.ac.uk/data-and-analysis/finances/table-8.csv"
+# ]
+
+# for url in urls:
+#     response = requests.get(url)
+#     if response.status_code == 200:
+#         file_path = os.path.join(csv_dir, os.path.basename(url))
+#         with open(file_path, "wb") as f:
+#             f.write(response.content)
+
+
+# Create a list of CSV file names and empty dictionary
+csv_list = [csv_dir + "/" + csv for csv in os.listdir(csv_dir)]
+csv_list = sorted(csv_list)
+csv_name = [csv[:-4] for csv in os.listdir(csv_dir)]
+csv_name = sorted(csv_name)
+
+
+# Read CSV files as dataframes in dictionary
+hesa = {}
+for i in range(0, len(csv_list)):
+    hesa[i] = pd.read_csv(csv_list[i], skiprows = 11)
+
+
+
+"""
+===============================================================================
+Converting HESA expenditure CSV files into Pandas DataFrames
+===============================================================================
+"""
+# Create a new directory, list of CSV file names and empty dictionary
+hesa_fin_dir = "c:\\Users\\mabm5\\Documents\\Projects\\Royal Society\\table_8"
+hesa_fin_list = [hesa_fin_dir + "/" + csv for csv in os.listdir(hesa_fin_dir)]
+hesa_fin_list = sorted(hesa_fin_list)
+
+hesa_fin = {}
+for i in range(0, len(hesa_fin_list)):
+    hesa_fin[i] = pd.read_csv(hesa_fin_list[i], skiprows = 12)
+    hesa_fin[i].rename(
+        columns = {
+            "Region of HE provider": "NUTS1", "HE Provider": "HE",
+            "Country of HE provider": "Country"
+        }, inplace = True
+    )
+    hesa_fin[i] = hesa_fin[i][hesa_fin[i].HE != "Total"]
+    hesa_fin[i] = hesa_fin[i][hesa_fin[i].NUTS1 != "All"]
+    hesa_fin[i] = hesa_fin[i][hesa_fin[i].Country != "All"]
+    hesa_fin[i]["Value(£000s)"] = pd.to_numeric(hesa_fin[i]["Value(£000s)"], errors = "coerce")
+
+
+
+"""
+===============================================================================
+Create dataframes of external investments into HE spin-off activities
+===============================================================================
+"""
+# List of entity categories receiving external investments
+spinoff_category = [
+                    str(x) for x in pd.Series(
+                        hesa[8]["Category Marker"]
+                    ).unique().tolist()
+]
+
+
+# Dictionary of external investments HE spin-off activities dataframes
+external_investment = {}
+for i in range(0, len(spinoff_category)):
+    external_investment[i] = pd.pivot_table(
+        hesa[8].rename(
+            columns = {
+                "Region of HE provider":"NUTS1",
+                "Category Marker":"Category"
+            }
+        ),
+        index = ["NUTS1", "Metric", "Category"],
+        columns = ["Academic Year"],
+        values = ["Value"],
+        aggfunc = np.sum,
+        fill_value = 0,
+        dropna = True
+        ).query(
+            f"Category == ['{spinoff_category[i]}'] & " +
+            "Metric == ['Estimated external investment received (£ thousands)']" 
+        ).unstack().rename(
+            columns = {
+                "2014/15":2015, "2015/16":2016, "2016/17":2017, "2017/18":2018,
+                "2018/19":2019, "2019/20":2020
+            }
+        ).reset_index(level = 1, drop = True)
+
+    # Flatten index of pivot table and transposing dataframe
+    external_investment[i].set_axis(
+        range(2015, 2021), axis = "columns", inplace = True
+    )
+    external_investment[i].set_axis(
+        external_investment[i].index.tolist(), axis = "index", inplace = True
+    )
+    external_investment[i] = external_investment[i].transpose()
+
+
+
+"""
+===============================================================================
+Create dataframes of occupation job postings at SOC Tier 1 level
+===============================================================================
+"""
+# Split SOC-4 to SOC-1 and -2 levels
+df[5]["SOC4"] = df[5]["SOC"].astype(str)
+df[5]["SOC2"] = df[5]["SOC4"].str[0:2].astype(int)
+df[5]["SOC1"] = df[5]["SOC4"].str[0:1].astype(int)
+
+
+# Create dataframes of occupation job postings at SOC 1-digit level
+soc_lvl1 = [int(x) for x in pd.Series(df[5]["SOC1"]).unique().tolist()]
+
+df_soc = {}
+for i in range(0, len(soc_lvl1)):
+    df_soc[i] = pd.pivot_table(
+        df[5],
+        index = ["Area", "SOC1"],
+        values = range(2016, 2021),
+        aggfunc = np.sum
+    ).query(
+        f"SOC1 == [{soc_lvl1[i]}]"
+    ).droplevel(level = 1)
+
+    # Flatten index of pivot table and transposing dataframe
+    df_soc[i].set_axis(
+        range(2016, 2021), axis = "columns", inplace = True
+    )
+    df_soc[i].set_axis(
+        df_soc[i].index.tolist(), axis = "index", inplace = True
+    )
+    df_soc[i] = df_soc[i].transpose()
+```
+
+# Time and Regional Trends
+
+This section shows several graphs showing trends on (a) changes in annual unique job postings and (b) external investments into HE spin-off activities. Spline interpolation is used to highlight observable patterns from sequential datapoints.
+
+:::{.callout-note}
+Interacting with figures:
+
+* The dropdown menu changes the figure to show the specific SOC major group/external investments into HE spin-offs.
+* Clicking on a specific region's name in the chart legend removes/reinstates that region into the chart.
+* Double clicking on a specific region's name in the figure legend isolates that specific region's trends in the chart (double clicking again restores all regions into the chart).
+* Hovering the cursor over each data point opens a small label callout with specific details of that given data point.
+:::
+
+## Job posting trends
+Interestingly, the relative year-on-year changes in unique job postings show strong co-movement patterns for most of SOC major groupings. One key explanation for such trends is the pressure induced by the COVID-19 pandemic in 2020, which is likely a key common factor driving down the growth rate of all job postings in 2020.
+
+### SOC 1-digit level, NUTS 1 regions
+```{python}
+#| echo: false
+#| column: screen-inset-shaded
+#| layout-nrow: 1
+#@title Annual unique job postings line charts
+import plotly.io as pio
+import plotly.express as px
+import plotly.graph_objects as go
+
+
+# Set plotly theme
+pio.templates.default = "plotly_white"
+
+
+# Create list of SOC major groups
+soc_lvl1_names = [
+    "1 Managers, directors and senior officials",
+    "2 Professional occupations",
+    "3 Associate professional occupations",
+    "4 Administrative and secretarial occupations",
+    "5 Skilled trades occupations",
+    "6 Caring, leisure and other service occupations",
+    "7 Sales and customer service occupations",
+    "8 Process, plant and machine operatives",
+    "9 Elementary occupations"
+]
+
+
+# Create dataframe of SOC job postings by major groups
+jobs_soc = pd.pivot_table(
+    df[5],
+    index = ["SOC1", "Area"],
+    values = range(2016, 2021),
+    aggfunc = np.sum
+).transpose()
+
+
+# Create a dictionary of figures for all SOC major groups
+fig = {}
+for i in range(1, len(soc_lvl1) + 1):
+    fig[i] = px.line(
+        jobs_soc.loc[:, i].drop(["UK"], axis = 1).dropna(how = "all"),
+        labels = {
+            "value": "Annual Unique Job Postings",
+            "index": "Year",
+            "Area": "NUTS1 Region"
+        },
+        line_shape = "spline"
+    )
+
+
+# Default figure
+fig_main = px.line(
+    jobs_soc.loc[:, 1].drop(["UK"], axis = 1).dropna(how = "all"),
+    labels = {
+        "value": "Annual Unique Job Postings",
+        "index": "Year",
+        "Area": "NUTS1 Region"
+    },
+    line_shape = "spline"
+)
+
+
+# Dropdown button settings
+menu_settings = [
+    dict(
+        buttons = [
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[0]}",
+                "args": [{"y": [dat.y for dat in fig[1].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[1]}",
+                "args": [{"y": [dat.y for dat in fig[2].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[2]}",
+                "args": [{"y": [dat.y for dat in fig[3].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[3]}",
+                "args": [{"y": [dat.y for dat in fig[4].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[4]}",
+                "args": [{"y": [dat.y for dat in fig[5].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[5]}",
+                "args": [{"y": [dat.y for dat in fig[6].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[6]}",
+                "args": [{"y": [dat.y for dat in fig[7].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[7]}",
+                "args": [{"y": [dat.y for dat in fig[8].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[8]}",
+                "args": [{"y": [dat.y for dat in fig[9].data]}]
+            }
+        ],
+        direction = "down",
+        showactive = True,
+        x = 1,
+        xanchor = "left",
+        y = 1.1
+    )
+]
+
+
+# Render plotly graph
+figplt = fig_main.update_layout(
+    title_text = "Annual Unique Job Postings<br><sup>SOC 1-digit level; NUTS1 regions</sup>",
+    font_family = "'Segoe UI Semibold', arial, verdana, sans-serif",
+    font_color = "seagreen",
+    title_font_color = "darkgreen",
+    xaxis = dict(
+        tickmode = "array",
+        tickvals = jobs_soc.index
+    ),
+    updatemenus = menu_settings
+)
+figplt.add_hline(y = 0)
+figplt.show()
+
+
+
+#@title Percentage change in annual unique job postings line charts
+# Create a dictionary of figures for all SOC major groups
+fig2 = {}
+for i in range(1, len(soc_lvl1) + 1):
+    fig2[i] = px.line(
+        jobs_soc.loc[:, i].drop(["UK"], axis = 1).pct_change().dropna(how = "all"),
+        labels = {
+            "value": "%Δ Annual Unique Job Postings",
+            "index": "Year",
+            "Area": "NUTS1 Region"
+        },
+        line_shape = "spline"
+    )
+
+
+# Default figure
+fig2_main = px.line(
+    jobs_soc.loc[:, 1].drop(["UK"], axis = 1).pct_change().dropna(how = "all"),
+    labels = {
+        "value": "%Δ Annual Unique Job Postings",
+        "index": "Year",
+        "Area": "NUTS1 Region"
+    },
+    line_shape = "spline"
+)
+
+
+# Dropdown button settings
+menu_settings = [
+    dict(
+        buttons = [
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[0]}",
+                "args": [{"y": [dat.y for dat in fig2[1].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[1]}",
+                "args": [{"y": [dat.y for dat in fig2[2].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[2]}",
+                "args": [{"y": [dat.y for dat in fig2[3].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[3]}",
+                "args": [{"y": [dat.y for dat in fig2[4].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[4]}",
+                "args": [{"y": [dat.y for dat in fig2[5].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[5]}",
+                "args": [{"y": [dat.y for dat in fig2[6].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[6]}",
+                "args": [{"y": [dat.y for dat in fig2[7].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[7]}",
+                "args": [{"y": [dat.y for dat in fig2[8].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[8]}",
+                "args": [{"y": [dat.y for dat in fig2[9].data]}]
+            }
+        ],
+        direction = "down",
+        showactive = True,
+        x = 1,
+        xanchor = "left",
+        y = 1.1
+    )
+]
+
+
+# Render plotly graph
+fig2plt = fig2_main.update_layout(
+    title_text = "% Change in Annual Unique Job Postings<br><sup>SOC 2-digit level; NUTS1 regions</sup>",
+    font_family = "'Segoe UI Semibold', arial, verdana, sans-serif",
+    font_color = "seagreen",
+    title_font_color = "darkgreen",
+    xaxis = dict(
+        tickmode = "array",
+        tickvals = jobs_soc.index
+    ),
+    yaxis = dict(
+        tickformat = ",.0%"
+    ),
+    updatemenus = menu_settings
+)
+fig2plt.add_hline(y = 0)
+fig2plt.show()
+```
+
+### SOC 2-digit level, NUTS 1 regions
+```{python}
+#| echo: false
+#| column: screen-inset-shaded
+#| layout-nrow: 1
+#@title Annual unique job postings line charts, SOC 2-digit level
+# List of SOC sub-major groups (2-digit level)
+soc_lvl2_names = [
+    "11 Corporate managers and directors",
+    "12 Other managers and proprietors",
+    "21 Science, research, engineering and technology professionals",
+    "22 Health professionals",
+    "23 Teaching and other educational professionals",
+    "24 Business, media and public service professionals",
+    "31 Science, engineering and technology associate professionals",
+    "32 Health and social care associate professionals",
+    "33 Protective service occupations",
+    "34 Culture, media and sports occupations",
+    "35 Business and public service associate professionals",
+    "41 Administrative occupations",
+    "42 Secretarial and related occupations",
+    "51 Skilled agricultural and related trades",
+    "52 Skilled metal, electrical and electronic trades",
+    "53 Skilled construction and building trades",
+    "54 Textiles, printing and other skilled trades",
+    "61 Caring personal service occupations",
+    "62 Leisure, travel and related personal service occupations",
+    "71 Sales occupations",
+    "72 Customer service occupations",
+    "81 Process, plant and machine operatives",
+    "82 Transport and mobile machine drivers and operatives",
+    "91 Elementary trades and related occupations",
+    "92 Elementary administration and service occupations"
+]
+soc_lvl2 = [int(x) for x in pd.Series(df[5]["SOC2"]).unique().tolist()]
+
+
+# Create dataframe of SOC job postings by major groups
+jobs_soc = pd.pivot_table(
+    df[5],
+    index = ["SOC2", "Area"],
+    values = range(2016, 2021),
+    aggfunc = np.sum
+).transpose()
+
+
+# Create a dictionary of figures for all SOC major groups
+fig = {}
+for i in range(0, len(soc_lvl2)):
+    fig[i] = px.line(
+        jobs_soc.loc[:, soc_lvl2[i]].drop(["UK"], axis = 1).dropna(how = "all"),
+        labels = {
+            "value": "Annual Unique Job Postings",
+            "index": "Year",
+            "Area": "NUTS1 Region"
+        },
+        line_shape = "spline"
+    )
+
+
+# Default figure
+fig_main = px.line(
+    jobs_soc.loc[:, soc_lvl2[0]].drop(["UK"], axis = 1).dropna(how = "all"),
+    labels = {
+        "value": "Annual Unique Job Postings",
+        "index": "Year",
+        "Area": "NUTS1 Region"
+    },
+    line_shape = "spline"
+)
+
+
+# Dropdown button settings
+menu_settings = [
+    dict(
+        buttons = [
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[0]}",
+                "args": [{"y": [dat.y for dat in fig[0].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[1]}",
+                "args": [{"y": [dat.y for dat in fig[1].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[2]}",
+                "args": [{"y": [dat.y for dat in fig[2].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[3]}",
+                "args": [{"y": [dat.y for dat in fig[3].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[4]}",
+                "args": [{"y": [dat.y for dat in fig[4].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[5]}",
+                "args": [{"y": [dat.y for dat in fig[5].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[6]}",
+                "args": [{"y": [dat.y for dat in fig[6].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[7]}",
+                "args": [{"y": [dat.y for dat in fig[7].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[8]}",
+                "args": [{"y": [dat.y for dat in fig[8].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[9]}",
+                "args": [{"y": [dat.y for dat in fig[9].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[10]}",
+                "args": [{"y": [dat.y for dat in fig[11].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[12]}",
+                "args": [{"y": [dat.y for dat in fig[12].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[13]}",
+                "args": [{"y": [dat.y for dat in fig[13].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[14]}",
+                "args": [{"y": [dat.y for dat in fig[14].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[15]}",
+                "args": [{"y": [dat.y for dat in fig[15].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[16]}",
+                "args": [{"y": [dat.y for dat in fig[17].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[18]}",
+                "args": [{"y": [dat.y for dat in fig[18].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[19]}",
+                "args": [{"y": [dat.y for dat in fig[19].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[20]}",
+                "args": [{"y": [dat.y for dat in fig[20].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[21]}",
+                "args": [{"y": [dat.y for dat in fig[21].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[22]}",
+                "args": [{"y": [dat.y for dat in fig[22].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[23]}",
+                "args": [{"y": [dat.y for dat in fig[23].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[24]}",
+                "args": [{"y": [dat.y for dat in fig[24].data]}]
+            }
+        ],
+        direction = "down",
+        showactive = True,
+        x = 1,
+        xanchor = "left",
+        y = 1.1
+    )
+]
+
+
+# Render plotly graph
+figplt = fig_main.update_layout(
+    title_text = "Annual Unique Job Postings<br><sup>SOC 2-digit level; NUTS1 regions</sup>",
+    font_family = "'Segoe UI Semibold', arial, verdana, sans-serif",
+    font_color = "seagreen",
+    title_font_color = "darkgreen",
+    xaxis = dict(
+        tickmode = "array",
+        tickvals = jobs_soc.index
+    ),
+    updatemenus = menu_settings
+)
+figplt.add_hline(y = 0)
+figplt.show()
+
+
+
+#@title Percentage change in annual unique job postings line charts
+# Create a dictionary of figures for all SOC major groups
+fig2 = {}
+for i in range(0, len(soc_lvl2)):
+    fig2[i] = px.line(
+        jobs_soc.loc[:, soc_lvl2[i]].drop(["UK"], axis = 1).pct_change().dropna(how = "all"),
+        labels = {
+            "value": "%Δ Annual Unique Job Postings",
+            "index": "Year",
+            "Area": "NUTS1 Region"
+        },
+        line_shape = "spline"
+    )
+
+
+# Default figure
+fig2_main = px.line(
+    jobs_soc.loc[:, soc_lvl2[0]].drop(["UK"], axis = 1).pct_change().dropna(how = "all"),
+    labels = {
+        "value": "%Δ Annual Unique Job Postings",
+        "index": "Year",
+        "Area": "NUTS1 Region"
+    },
+    line_shape = "spline"
+)
+
+
+# Dropdown button settings
+menu_settings = [
+    dict(
+        buttons = [
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[0]}",
+                "args": [{"y": [dat.y for dat in fig2[0].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[1]}",
+                "args": [{"y": [dat.y for dat in fig2[1].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[2]}",
+                "args": [{"y": [dat.y for dat in fig2[2].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[3]}",
+                "args": [{"y": [dat.y for dat in fig2[3].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[4]}",
+                "args": [{"y": [dat.y for dat in fig2[4].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[5]}",
+                "args": [{"y": [dat.y for dat in fig2[5].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[6]}",
+                "args": [{"y": [dat.y for dat in fig2[6].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[7]}",
+                "args": [{"y": [dat.y for dat in fig2[7].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[8]}",
+                "args": [{"y": [dat.y for dat in fig2[8].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[9]}",
+                "args": [{"y": [dat.y for dat in fig2[9].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[10]}",
+                "args": [{"y": [dat.y for dat in fig2[11].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[12]}",
+                "args": [{"y": [dat.y for dat in fig2[12].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[13]}",
+                "args": [{"y": [dat.y for dat in fig2[13].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[14]}",
+                "args": [{"y": [dat.y for dat in fig2[14].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[15]}",
+                "args": [{"y": [dat.y for dat in fig2[15].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[16]}",
+                "args": [{"y": [dat.y for dat in fig2[17].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[18]}",
+                "args": [{"y": [dat.y for dat in fig2[18].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[19]}",
+                "args": [{"y": [dat.y for dat in fig2[19].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[20]}",
+                "args": [{"y": [dat.y for dat in fig2[20].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[21]}",
+                "args": [{"y": [dat.y for dat in fig2[21].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[22]}",
+                "args": [{"y": [dat.y for dat in fig2[22].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[23]}",
+                "args": [{"y": [dat.y for dat in fig2[23].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[24]}",
+                "args": [{"y": [dat.y for dat in fig2[24].data]}]
+            }
+        ],
+        direction = "down",
+        showactive = True,
+        x = 1,
+        xanchor = "left",
+        y = 1.1
+    )
+]
+
+
+# Render plotly graph
+fig2plt = fig2_main.update_layout(
+    title_text = "% Change in Annual Unique Job Postings<br><sup>SOC 2-digit level; NUTS1 regions</sup>",
+    font_family = "'Segoe UI Semibold', arial, verdana, sans-serif",
+    font_color = "seagreen",
+    title_font_color = "darkgreen",
+    xaxis = dict(
+        tickmode = "array",
+        tickvals = jobs_soc.index
+    ),
+    yaxis = dict(
+        tickformat = ",.0%"
+    ),
+    updatemenus = menu_settings
+)
+fig2plt.add_hline(y = 0)
+fig2plt.show()
+```
+
+### SOC 1-digit level, select NUTS 3 area
+```{python}
+#| echo: false
+#| column: screen-inset-shaded
+#| layout-nrow: 1
+# Filter NUTS3 dataframe for SOC Major Group subcomponents
+df[11]["SOC4"] = df[11]["SOC"].astype(str)
+df[11]["SOC2"] = df[11]["SOC4"].str[0:2].astype(int)
+df[11]["SOC1"] = df[11]["SOC4"].str[0:1].astype(int)
+
+jobs_soc = pd.pivot_table(
+    df[11],
+    index = ["SOC1", "Area"],
+    values = range(2016, 2021),
+    aggfunc = np.sum
+).transpose()
+
+
+# Create a dictionary of figures for all SOC major groups
+fig = {}
+for i in range(1, len(soc_lvl1) + 1):
+    fig[i] = px.line(
+        jobs_soc.loc[:, i].dropna(how = "all"),
+        labels = {
+            "value": "Annual Unique Job Postings",
+            "index": "Year",
+            "Area": "NUTS3 Area"
+        },
+        line_shape = "spline"
+    )
+
+
+# Default figure
+fig_main = px.line(
+    jobs_soc.loc[:, 1].dropna(how = "all"),
+    labels = {
+        "value": "Annual Unique Job Postings",
+        "index": "Year",
+        "Area": "NUTS3 Area"
+    },
+    line_shape = "spline"
+)
+
+
+# Dropdown button settings
+menu_settings = [
+    dict(
+        buttons = [
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[0]}",
+                "args": [{"y": [dat.y for dat in fig[1].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[1]}",
+                "args": [{"y": [dat.y for dat in fig[2].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[2]}",
+                "args": [{"y": [dat.y for dat in fig[3].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[3]}",
+                "args": [{"y": [dat.y for dat in fig[4].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[4]}",
+                "args": [{"y": [dat.y for dat in fig[5].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[5]}",
+                "args": [{"y": [dat.y for dat in fig[6].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[6]}",
+                "args": [{"y": [dat.y for dat in fig[7].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[7]}",
+                "args": [{"y": [dat.y for dat in fig[8].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[8]}",
+                "args": [{"y": [dat.y for dat in fig[9].data]}]
+            }
+        ],
+        direction = "down",
+        showactive = True,
+        x = 1,
+        xanchor = "left",
+        y = 1.1
+    )
+]
+
+
+# Render plotly graph
+figplt = fig_main.update_layout(
+    title_text = "Annual Unique Job Postings<br><sup>SOC 1-digit level; selected NUTS3 areas</sup>",
+    font_family = "'Segoe UI Semibold', arial, verdana, sans-serif",
+    font_color = "seagreen",
+    title_font_color = "darkgreen",
+    xaxis = dict(
+        tickmode = "array",
+        tickvals = jobs_soc.index
+    ),
+    updatemenus = menu_settings
+)
+figplt.add_hline(y = 0)
+figplt.show()
+
+
+# Create a dictionary of figures for all SOC major groups
+fig2 = {}
+for i in range(1, len(soc_lvl1) + 1):
+    fig2[i] = px.line(
+        jobs_soc.loc[:, i].pct_change().dropna(how = "all"),
+        labels = {
+            "value": "%Δ Annual Unique Job Postings",
+            "index": "Year",
+            "Area": "NUTS3 Area"
+        },
+        line_shape = "spline"
+    )
+
+
+# Default figure
+fig2_main = px.line(
+    jobs_soc.loc[:, 1].pct_change().dropna(how = "all"),
+    labels = {
+        "value": "%Δ Annual Unique Job Postings",
+        "index": "Year",
+        "Area": "NUTS3 Area"
+    },
+    line_shape = "spline"
+)
+
+
+# Dropdown button settings
+menu_settings = [
+    dict(
+        buttons = [
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[0]}",
+                "args": [{"y": [dat.y for dat in fig2[1].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[1]}",
+                "args": [{"y": [dat.y for dat in fig2[2].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[2]}",
+                "args": [{"y": [dat.y for dat in fig2[3].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[3]}",
+                "args": [{"y": [dat.y for dat in fig2[4].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[4]}",
+                "args": [{"y": [dat.y for dat in fig2[5].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[5]}",
+                "args": [{"y": [dat.y for dat in fig2[6].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[6]}",
+                "args": [{"y": [dat.y for dat in fig2[7].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[7]}",
+                "args": [{"y": [dat.y for dat in fig2[8].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl1_names[8]}",
+                "args": [{"y": [dat.y for dat in fig2[9].data]}]
+            }
+        ],
+        direction = "down",
+        showactive = True,
+        x = 1,
+        xanchor = "left",
+        y = 1.1
+    )
+]
+
+
+# Render plotly graph
+fig2plt = fig2_main.update_layout(
+    title_text = "% Change in Annual Unique Job Postings<br><sup>SOC 1-digit level; selected NUTS3 areas</sup>",
+    font_family = "'Segoe UI Semibold', arial, verdana, sans-serif",
+    font_color = "seagreen",
+    title_font_color = "darkgreen",
+    xaxis = dict(
+        tickmode = "array",
+        tickvals = jobs_soc.index
+    ),
+    yaxis = dict(
+        tickformat = ",.0%"
+    ),
+    updatemenus = menu_settings
+)
+fig2plt.add_hline(y = 0)
+fig2plt.show()
+```
+
+### SOC 2-digit level, select NUTS 3 area
+```{python}
+#| echo: false
+#| column: screen-inset-shaded
+#| layout-nrow: 1
+# Filter NUTS3 dataframe for SOC Sub-major Group subcomponents
+jobs_soc = pd.pivot_table(
+    df[11],
+    index = ["SOC2", "Area"],
+    values = range(2016, 2021),
+    aggfunc = np.sum
+).transpose()
+
+# Create a dictionary of figures for all SOC major groups
+fig = {}
+for i in range(0, len(soc_lvl2)):
+    fig[i] = px.line(
+        jobs_soc.loc[:, soc_lvl2[i]].dropna(how = "all"),
+        labels = {
+            "value": "Annual Unique Job Postings",
+            "index": "Year",
+            "Area": "NUTS3 Area"
+        },
+        line_shape = "spline"
+    )
+
+
+# Default figure
+fig_main = px.line(
+    jobs_soc.loc[:, soc_lvl2[0]].dropna(how = "all"),
+    labels = {
+        "value": "Annual Unique Job Postings",
+        "index": "Year",
+        "Area": "NUTS3 Area"
+    },
+    line_shape = "spline"
+)
+
+
+# Dropdown button settings
+menu_settings = [
+    dict(
+        buttons = [
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[0]}",
+                "args": [{"y": [dat.y for dat in fig[0].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[1]}",
+                "args": [{"y": [dat.y for dat in fig[1].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[2]}",
+                "args": [{"y": [dat.y for dat in fig[2].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[3]}",
+                "args": [{"y": [dat.y for dat in fig[3].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[4]}",
+                "args": [{"y": [dat.y for dat in fig[4].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[5]}",
+                "args": [{"y": [dat.y for dat in fig[5].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[6]}",
+                "args": [{"y": [dat.y for dat in fig[6].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[7]}",
+                "args": [{"y": [dat.y for dat in fig[7].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[8]}",
+                "args": [{"y": [dat.y for dat in fig[8].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[9]}",
+                "args": [{"y": [dat.y for dat in fig[9].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[10]}",
+                "args": [{"y": [dat.y for dat in fig[11].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[12]}",
+                "args": [{"y": [dat.y for dat in fig[12].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[13]}",
+                "args": [{"y": [dat.y for dat in fig[13].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[14]}",
+                "args": [{"y": [dat.y for dat in fig[14].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[15]}",
+                "args": [{"y": [dat.y for dat in fig[15].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[16]}",
+                "args": [{"y": [dat.y for dat in fig[17].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[18]}",
+                "args": [{"y": [dat.y for dat in fig[18].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[19]}",
+                "args": [{"y": [dat.y for dat in fig[19].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[20]}",
+                "args": [{"y": [dat.y for dat in fig[20].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[21]}",
+                "args": [{"y": [dat.y for dat in fig[21].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[22]}",
+                "args": [{"y": [dat.y for dat in fig[22].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[23]}",
+                "args": [{"y": [dat.y for dat in fig[23].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[24]}",
+                "args": [{"y": [dat.y for dat in fig[24].data]}]
+            }
+        ],
+        direction = "down",
+        showactive = True,
+        x = 1,
+        xanchor = "left",
+        y = 1.1
+    )
+]
+
+
+# Render plotly graph
+figplt = fig_main.update_layout(
+    title_text = "Annual Unique Job Postings<br><sup>SOC 2-digit level; selected NUTS3 areas</sup>",
+    font_family = "'Segoe UI Semibold', arial, verdana, sans-serif",
+    font_color = "seagreen",
+    title_font_color = "darkgreen",
+    xaxis = dict(
+        tickmode = "array",
+        tickvals = jobs_soc.index
+    ),
+    updatemenus = menu_settings
+)
+figplt.add_hline(y = 0)
+figplt.show()
+
+
+
+# Create a dictionary of figures for all SOC major groups
+fig2 = {}
+for i in range(0, len(soc_lvl2)):
+    fig2[i] = px.line(
+        jobs_soc.loc[:, soc_lvl2[i]].pct_change().dropna(how = "all"),
+        labels = {
+            "value": "%Δ Annual Unique Job Postings",
+            "index": "Year",
+            "Area": "NUTS3 Area"
+        },
+        line_shape = "spline"
+    )
+
+
+# Default figure
+fig2_main = px.line(
+    jobs_soc.loc[:, soc_lvl2[0]].pct_change().dropna(how = "all"),
+    labels = {
+        "value": "%Δ Annual Unique Job Postings",
+        "index": "Year",
+        "Area": "NUTS3 Area"
+    },
+    line_shape = "spline"
+)
+
+
+# Dropdown button settings
+menu_settings = [
+    dict(
+        buttons = [
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[0]}",
+                "args": [{"y": [dat.y for dat in fig2[0].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[1]}",
+                "args": [{"y": [dat.y for dat in fig2[1].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[2]}",
+                "args": [{"y": [dat.y for dat in fig2[2].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[3]}",
+                "args": [{"y": [dat.y for dat in fig2[3].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[4]}",
+                "args": [{"y": [dat.y for dat in fig2[4].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[5]}",
+                "args": [{"y": [dat.y for dat in fig2[5].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[6]}",
+                "args": [{"y": [dat.y for dat in fig2[6].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[7]}",
+                "args": [{"y": [dat.y for dat in fig2[7].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[8]}",
+                "args": [{"y": [dat.y for dat in fig2[8].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[9]}",
+                "args": [{"y": [dat.y for dat in fig2[9].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[10]}",
+                "args": [{"y": [dat.y for dat in fig2[11].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[12]}",
+                "args": [{"y": [dat.y for dat in fig2[12].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[13]}",
+                "args": [{"y": [dat.y for dat in fig2[13].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[14]}",
+                "args": [{"y": [dat.y for dat in fig2[14].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[15]}",
+                "args": [{"y": [dat.y for dat in fig2[15].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[16]}",
+                "args": [{"y": [dat.y for dat in fig2[17].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[18]}",
+                "args": [{"y": [dat.y for dat in fig2[18].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[19]}",
+                "args": [{"y": [dat.y for dat in fig2[19].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[20]}",
+                "args": [{"y": [dat.y for dat in fig2[20].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[21]}",
+                "args": [{"y": [dat.y for dat in fig2[21].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[22]}",
+                "args": [{"y": [dat.y for dat in fig2[22].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[23]}",
+                "args": [{"y": [dat.y for dat in fig2[23].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{soc_lvl2_names[24]}",
+                "args": [{"y": [dat.y for dat in fig2[24].data]}]
+            }
+        ],
+        direction = "down",
+        showactive = True,
+        x = 1,
+        xanchor = "left",
+        y = 1.1
+    )
+]
+
+
+# Render plotly graph
+fig2plt = fig2_main.update_layout(
+    title_text = "% Change in Annual Unique Job Postings<br><sup>SOC 2-digit level; selected NUTS3 areas</sup>",
+    font_family = "'Segoe UI Semibold', arial, verdana, sans-serif",
+    font_color = "seagreen",
+    title_font_color = "darkgreen",
+    xaxis = dict(
+        tickmode = "array",
+        tickvals = jobs_soc.index
+    ),
+    yaxis = dict(
+        tickformat = ",.0%"
+    ),
+    updatemenus = menu_settings
+)
+fig2plt.add_hline(y = 0)
+fig2plt.show()
+```
+
+## Investment into HE spin-off trends
+External investments are mostly concentrated to the Greater South East (combined regions of London, South East, and East of England). At the university level, the Oxford and UCL outpaces all other UK universities—even the gap between Cambridge and Oxford/UCL is large and widening.
+
+```{python}
+#| echo: false
+#| column: screen-inset-shaded
+#| layout-nrow: 1
+#@title Estimated External Investments into HE spin-off activities graph
+# Create dataframe of external investment into HE spin-offs
+est_ext_investment = pd.pivot_table(
+    hesa[8].rename(
+        columns = {
+            "Region of HE provider": "NUTS1",
+            "Category Marker": "Category",
+            "Academic Year": "Year"
+        }
+    ),
+    index = ["Category", "NUTS1", "Metric"],
+    columns = ["Year"],
+    values = ["Value"],
+    aggfunc = np.sum,
+    fill_value = 0,
+    dropna = True
+).query(
+    "Metric == ['Estimated external investment received (£ thousands)']"
+).rename(
+    columns = {
+        "2014/15":2015, "2015/16":2016, "2016/17":2017, "2017/18":2018, "2018/19":2019, "2019/20":2020
+    }
+).reset_index(level = 2, drop = True).transpose().droplevel(level = 0)/1000
+
+
+# Create a dictionary of figures for all investments into HE spin-offs
+fig = {}
+for i in range(0, len(spinoff_category)):
+    fig[i] = px.line(
+        est_ext_investment.loc[
+            :, spinoff_category[i]
+        ].dropna(how = "all"),
+        labels = {
+            "value": "External investments, £ millions",
+            "NUTS1": "NUTS1 Region"
+        },
+        line_shape = "spline"
+    )
+
+
+# Default figure
+fig_main = px.line(
+    est_ext_investment.loc[:, spinoff_category[0]].dropna(how = "all"),
+    labels = {
+        "value": "External investments, £ millions",
+        "NUTS1": "NUTS1 Region"
+    },
+    line_shape = "spline"
+)
+
+
+# Dropdown button settings
+menu_settings = [
+    dict(
+        buttons = [
+            {
+                "method": "restyle",
+                "label": f"{spinoff_category[0]}",
+                "args": [{"y": [dat.y for dat in fig[0].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{spinoff_category[1]}",
+                "args": [{"y": [dat.y for dat in fig[1].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{spinoff_category[2]}",
+                "args": [{"y": [dat.y for dat in fig[2].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{spinoff_category[3]}",
+                "args": [{"y": [dat.y for dat in fig[3].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{spinoff_category[4]}",
+                "args": [{"y": [dat.y for dat in fig[4].data]}]
+            }
+        ],
+        direction = "down",
+        showactive = True,
+        x = 1,
+        xanchor = "left",
+        y = 1.1
+    )
+]
+
+
+# Render plotly graph
+figplt = fig_main.update_layout(
+    title_text = "Estimated external investments into HE spin-offs, in £ millions<br><sup>NUTS1 regions</sup>",
+    font_family = "'Segoe UI Semibold', arial, verdana, sans-serif",
+    font_color = "seagreen",
+    title_font_color = "darkgreen",
+    xaxis = dict(
+        tickmode = "array",
+        tickvals = est_ext_investment.index
+    ),
+    updatemenus = menu_settings
+)
+figplt.add_hline(y = 0)
+figplt.show()
+
+
+
+#@title Ext. Investments into HE spin-off activities graph by top universities
+# List of top universities by investments received
+uni_list = [
+    "The University of Cambridge", "The University of Oxford",
+    "Imperial College of Science, Technology and Medicine",
+    "University College London", "King's College London",
+    "The Institute of Cancer Research", "Queen Mary University of London",
+    "The University of Warwick", "The University of Manchester",
+    "The University of Bristol", "The University of Southampton",
+    "The University of Leeds", "The University of Birmingham",
+    "University of Nottingham", "The University of Sussex"
+]
+
+# Create dataframe of SOC job postings by major groups
+uni_ext_investment = pd.pivot_table(
+    hesa[8].rename(
+        columns = {
+            "HE Provider": "HE",
+            "Category Marker": "Category",
+            "Academic Year": "Year"
+        }
+    ),
+    index = ["Category", "Metric", "HE"],
+    columns = ["Year"],
+    values = ["Value"],
+    aggfunc = np.sum,
+    fill_value = 0,
+    dropna = True
+).query(
+    f"HE == ['{uni_list[0]}'] | "
+    + f"HE == ['{uni_list[1]}'] | "
+    + f"HE == ['{uni_list[2]}'] | "
+    + f"HE == ['{uni_list[3]}'] | "
+    + f'HE == ["{uni_list[4]}"] | '
+    + f"HE == ['{uni_list[5]}'] | "
+    + f"HE == ['{uni_list[6]}'] | "
+    + f"HE == ['{uni_list[7]}'] | "
+    + f"HE == ['{uni_list[8]}'] | "
+    + f"HE == ['{uni_list[9]}'] | "
+    + f"HE == ['{uni_list[10]}'] | "
+    + f"HE == ['{uni_list[11]}'] | "
+    + f"HE == ['{uni_list[12]}'] | "
+    + f"HE == ['{uni_list[13]}'] | "
+    + f"HE == ['{uni_list[14]}']"
+).query(
+    "Metric == ['Estimated external investment received (£ thousands)']"
+).rename(
+    columns = {
+        "2014/15":2015, "2015/16":2016, "2016/17":2017, "2017/18":2018, "2018/19":2019, "2019/20":2020
+    }
+).reset_index(level = 1, drop = True).transpose().droplevel(level = 0)/1000
+
+
+# Create a dictionary of figures for all investments into HE spin-offs
+fig2 = {}
+for i in range(0, len(spinoff_category)):
+    fig2[i] = px.line(
+        uni_ext_investment.loc[
+            :, spinoff_category[i]
+        ].dropna(how = "all"),
+        labels = {
+            "value": "Est. external investments, £ millions",
+            "HE": "HE Institution"
+        },
+        line_shape = "spline"
+    )   
+
+
+# Default figure
+fig2_main = px.line(
+    uni_ext_investment.loc[:, spinoff_category[0]].dropna(how = "all"),
+    labels = {
+        "value": "Est. external investments, £ millions",
+        "HE": "HE Institution"
+    },
+    line_shape = "spline"
+)
+
+
+# Dropdown button settings
+menu_settings = [
+    dict(
+        buttons = [
+            {
+                "method": "restyle",
+                "label": f"{spinoff_category[0]}",
+                "args": [{"y": [dat.y for dat in fig2[0].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{spinoff_category[1]}",
+                "args": [{"y": [dat.y for dat in fig2[1].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{spinoff_category[2]}",
+                "args": [{"y": [dat.y for dat in fig2[2].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{spinoff_category[3]}",
+                "args": [{"y": [dat.y for dat in fig2[3].data]}]
+            },
+            {
+                "method": "restyle",
+                "label": f"{spinoff_category[4]}",
+                "args": [{"y": [dat.y for dat in fig2[4].data]}]
+            }
+        ],
+        direction = "down",
+        showactive = True,
+        x = 1,
+        xanchor = "left",
+        y = 1.1
+    )
+]
+
+
+# Render plotly graph
+fig2plt = fig2_main.update_layout(
+    title_text = "Estimated external investments into HE spin-offs, in £ millions<br><sup>Top 15 UK universities receiving highest external investments</sup>",
+    font_family = "'Segoe UI Semibold', arial, verdana, sans-serif",
+    font_color = "seagreen",
+    title_font_color = "darkgreen",
+    xaxis = dict(
+        tickmode = "array",
+        tickvals = uni_ext_investment.index
+    ),
+    updatemenus = menu_settings
+)
+fig2plt.add_hline(y = 0)
+fig2plt.show()
+```
+
+# Econometric Analyses
+
+To empirically estimate the relationship between investments, we run fixed effect regressions with regional- and time-fixed effects:
+
+$$
+{y}_{s,i,t} - \bar{y}_{s,i,t} = (\mathbf{X}_{i,t} - \bar{\mathbf{X}}_{i})^\prime\beta  + (\mathbf{Z}_{i,t} - \bar{\mathbf{Z}}_{i})^\prime\gamma+(u_{i,t} - \bar{u}_{i})
+$$
+
+where,
+
+* $y_{s,i,t}$ are annual unique job postings for SOC 1-digit level. $s$ is the SOC 1-digit level major group, $i$ is the NUTS 1 region, and $t$ is the year. The regression results below are set with $s$ = 1, 2 and 3 respectively as the dependent variables for each table; these groups are chosen as representative case studies and the fact that they form the majority of annual unique job postings.
+* $\mathbf{X}_{i,t}$ is the matrix of explanatory variables of interest, which includes all variables relating to external investments into HE spin-off activities.
+* $\mathbf{Z}_{i,t}$ is the matrix of control variables, which includes variables such as HE spin-off activity metrics (e.g. turnover, employment, new firms, status of activity, etc.) as well as all subcomponents of HE expenditures.
+* $u_{i,t}$ is the idiosyncratic error term for region $i$ and year $t$.
+
+Each of the regression specifications are run three times, with more control variables added into the model successively. Clustered covariance estimators are applied for the random and fixed effects regressions.
+
+::: {.callout-note collapse="true" icon=false}
+
+## Glossary of variables and their abbreviations
+| Abbreviation | Description|
+| ----------- | --------------------------------- |
+| `inv_spinoffexhep` | Estimated external investments into formal spin-offs (not HEP owned) |
+| `inv_gradstartup` | Estimated external investments into graduate start-ups |
+| `inv_socialent` | Estimated external investments into social enterprises |
+| `inv_spinoffhep` | Estimated external investments into spin-offs with some HEP ownership |
+| `inv_staffstartup` | Estimated external investments into staff start-ups |
+| `emp_spinoffexhep` | Estimated current employment of all active firms by formal spin-offs (not HEP owned), full-time equivalents (FTE) |
+| `emp_gradstartup` | Estimated current employment of all active firms by graduate start-ups, FTE |
+| `emp_socialent` | Estimated current employment of all active firms by social enterprises, FTE |
+| `emp_spinoffhep` | Estimated current employment of all active firms by spin-offs with some HEP ownership, FTE |
+| `emp_staffstartup` | Estimated current employment of all active firms by staff start-ups, FTE |
+| `turnover_spinoffexhep` | Estimated current turnover of all active firms by formal spin-offs (not HEP owned) |
+| `turnover_gradstartup` | Estimated current turnover of all active firms by graduate start-ups |
+| `turnover_socialent` | Estimated current turnover of all active firms by social enterprises |
+| `turnover_spinoffhep` | Estimated current turnover of all active firms by spin-offs with some HEP ownership |
+| `turnover_staffstartup` | Estimated current turnover of all active firms by staff start-ups |
+| `newco_spinoffexhep` | Number of newly registered formal spin-offs (not HEP owned) companies |
+| `newco_gradstartup` | Number of newly registered graduate start-ups |
+| `newco_socialent` | Number of newly registered social enterprises |
+| `newco_spinoffhep` | Number of newly registered spin-offs with some HEP ownership companies |
+| `activeco_staffstartup` | Number of active staff start-ups |
+| `activeco_spinoffexhep` | Number of active formal spin-offs (not HEP owned) |
+| `activeco_gradstartup` | Number of active graduate start-ups |
+| `activeco_socialent` | Number of active social enterprises |
+| `activeco_spinoffhep` | Number of active spin-offs with some HEP ownership |
+| `activeco_staffstartup` | Number of active staff start-ups |
+| `activeco_staffstartup` | Number of active staff start-ups |
+| `3yrco_spinoffexhep` | Number of active formal spin-offs (not HEP owned) that has survived at least 3 years |
+| `3yrco_gradstartup` | Number of active graduate start-ups that has survived at least 3 years |
+| `3yrco_socialent` | Number of active social enterprises that has survived at least 3 years |
+| `3yrco_spinoffhep` | Number of active spin-offs with some HEP ownership that has survived at least 3 years |
+| `3yrco_staffstartup` | Number of active staff start-ups that has survived at least 3 years |
+| `acad_services` | Expenditure incurred by centralised academic services |
+| `premises` | Expenditure incurred on the management of premises |
+| `residences_catering` | Expenditure incurred in providing the residence, catering and any conference operations |
+| `research_grants` | Direct costs attributed to research grants and contracts |
+| `acad_depts` | Expenditure incurred by or on behalf of academic departments |
+| `admin_services` | Expenditure incurred by central administration and services, general education expenditure, and staff and student facilities |
+
+::: 
+
+```{python}
+#| echo: false
+#@title Merged dataframes of HESA spinoff statistics with SOC Tier 1 annual unique job postings
+warnings.filterwarnings("ignore") 
+
+
+# Concatenate HE spinoff acitivities' dataframes for each NUTS 1 region
+he_spinoffs = pd.pivot_table(
+    hesa[8].rename(
+        columns = {
+            "Region of HE provider":"NUTS1", "Category Marker":"Category",
+            "Academic Year":"Year"
+        }
+    ),
+    index = ["NUTS1", "Year"],
+    columns = ["Metric", "Category"],
+    values = ["Value"],
+    aggfunc = np.sum,
+    fill_value = 0,
+    dropna = True
+).rename(
+    index = {
+        "2014/15": pd.to_datetime("2015", format = "%Y").year,
+        "2015/16": pd.to_datetime("2016", format = "%Y").year,
+        "2016/17": pd.to_datetime("2017", format = "%Y").year,
+        "2017/18": pd.to_datetime("2018", format = "%Y").year,
+        "2018/19": pd.to_datetime("2019", format = "%Y").year,
+        "2019/20": pd.to_datetime("2020", format = "%Y").year
+    }
+).rename(
+    index = {
+        2015: pd.to_datetime(2015, format = "%Y"),
+        2016: pd.to_datetime(2016, format = "%Y"),
+        2017: pd.to_datetime(2017, format = "%Y"),
+        2018: pd.to_datetime(2018, format = "%Y"),
+        2019: pd.to_datetime(2019, format = "%Y"),
+        2020: pd.to_datetime(2020, format = "%Y")
+    }
+)
+
+
+# Concatenate dataframes of SOC Tier 1 annual job postings for each NUTS1 region
+# List of NUTS1 regions
+nuts1 = pd.Series(df[5][df[5].Area != "UK"]["Area"]).unique().tolist()
+
+
+# Set first dataframe for East Midlands SOC Tier 1 annual job postings
+job_postings = df[5][df[5].Area != "UK"][df[5].Area == nuts1[0]].groupby("SOC1")[2016, 2017, 2018, 2019, 2020].sum().transpose()
+job_postings["NUTS1"] = f"{nuts1[0]}"
+job_postings = job_postings.reset_index()
+job_postings.rename(columns = {"index":"Year"}, inplace = True)
+job_postings["Year"] = pd.to_datetime(job_postings["Year"], format = "%Y")
+job_postings.set_index(["NUTS1", "Year"], inplace = True)
+
+
+# SOC Tier 1 annual job postings for loop for other NUTS1 regions
+for i in range(1, len(nuts1)):
+    temp = df[5][df[5].Area != "UK"][df[5].Area == nuts1[i]].groupby("SOC1")[2016, 2017, 2018, 2019, 2020].sum().transpose()
+    temp["NUTS1"] = f"{nuts1[i]}"
+    temp = temp.reset_index()
+    temp.rename(columns = {"index":"Year"}, inplace = True)
+    temp["Year"] = pd.to_datetime(temp["Year"], format = "%Y")
+    temp.set_index(["NUTS1", "Year"], inplace = True)
+    job_postings = pd.concat([job_postings, temp])
+
+
+# HE expenditures
+total_list = [x for x in pd.Series(hesa_fin[0]["Academic departments"]).unique().tolist() if "Total" in x]
+total_list
+pivot_query = ""
+for j in range(0, len(total_list)-2):
+    pivot_query += f"depts == ['{total_list[j]}'] | "
+pivot_query += f"depts == ['{total_list[-1]}']"
+
+hesa_spend = {}
+for i in range(0, len(hesa_fin_list)):
+    hesa_spend[i] = pd.pivot_table(
+        hesa_fin[i].rename(
+            columns = {
+                "Value(£000s)": "Value", "Academic departments": "depts"
+            }
+        ),
+        index = ["depts", "Activity"],
+        columns = ["NUTS1"],
+        values = "Value",
+        aggfunc = np.sum,
+        fill_value = 0,
+        dropna = True
+    ).query("Activity == ['Total expenditure']").query(pivot_query).transpose()
+    hesa_spend[i] = hesa_spend[i].droplevel(level = 1, axis = 1)
+
+frames = [hesa_spend[x] for x in range(0, len(hesa_fin_list))]
+
+he_expenditure = pd.concat(
+    frames, keys = list(range(2016, 2022))
+).reset_index()
+he_expenditure.rename(columns = {"level_0": "Year"}, inplace = True)
+he_expenditure["Year"] = pd.to_datetime(he_expenditure["Year"], format = "%Y")
+he_expenditure.set_index(["NUTS1", "Year"], inplace = True)
+
+
+#Merge job postings and external investments dataframe
+reg_df_nuts1 = pd.merge(he_spinoffs, job_postings, left_index = True, right_index = True)
+reg_df_nuts1 = pd.merge(reg_df_nuts1, he_expenditure, left_index = True, right_index = True)
+reg_df_nuts1.columns = [
+    "emp_spinoffexhep", "emp_gradstartup", "emp_socialent", "emp_spinoffhep", "emp_staffstartup", "turnover_spinoffexhep", "turnover_gradstartup", "turnover_socialent", "turnover_spinoffhep", "turnover_staffstartup", "inv_spinoffexhep", "inv_gradstartup", "inv_socialent", "inv_spinoffhep", "inv_staffstartup", "newco_spinoffexhep", "newco_gradstartup", "newco_socialent", "newco_spinoffhep", "newco_staffstartup", "activeco_spinoffexhep", "activeco_gradstartup", "activeco_socialent", "activeco_spinoffhep", "activeco_staffstartup", "3yrco_spinoffexhep", "3yrco_gradstartup", "3yrco_socialent", "3yrco_spinoffhep", "3yrco_staffstartup", "soc_1", "soc_2", "soc_3", "soc_4", "soc_5", "soc_6", "soc_7", "soc_8", "soc_9", "acad_services", "premises", "residences_catering", "research_grants", "research_council", "acad_depts", "admin_services", "total_he_exp"
+]
+reg_df_nuts1["total_inv"] = reg_df_nuts1[["inv_spinoffexhep", "inv_gradstartup", "inv_socialent", "inv_spinoffhep", "inv_staffstartup"]].sum(axis = 1)
+reg_df_nuts1["total_emp"] = reg_df_nuts1[["emp_spinoffexhep", "emp_gradstartup", "emp_socialent", "emp_spinoffhep", "emp_staffstartup"]].sum(axis = 1)
+reg_df_nuts1["total_rev"] = reg_df_nuts1[["turnover_spinoffexhep", "turnover_gradstartup", "turnover_socialent", "turnover_spinoffhep", "turnover_staffstartup"]].sum(axis = 1)
+reg_df_nuts1["total_newco"] = reg_df_nuts1[["newco_spinoffexhep", "newco_gradstartup", "newco_socialent", "newco_spinoffhep", "newco_staffstartup"]].sum(axis = 1)
+reg_df_nuts1["total_activeco"] = reg_df_nuts1[["activeco_spinoffexhep", "activeco_gradstartup", "activeco_socialent", "activeco_spinoffhep", "activeco_staffstartup"]].sum(axis = 1)
+reg_df_nuts1["total_3yrco"] = reg_df_nuts1[["3yrco_spinoffexhep", "3yrco_gradstartup", "3yrco_socialent", "3yrco_spinoffhep", "3yrco_staffstartup"]].sum(axis = 1)
+reg_df_nuts1["total_soc"] = reg_df_nuts1[["soc_1", "soc_2", "soc_3", "soc_4", "soc_5", "soc_6", "soc_7", "soc_8", "soc_9"]].sum(axis = 1)
+
+reg_df_nuts1.replace({0:1}, inplace = True)
+```
+
+```{python}
+#| column: screen-inset-shaded
+import statsmodels.api as sm
+from linearmodels import PanelOLS
+from linearmodels.panel import compare
+warnings.filterwarnings("ignore")
+
+
+# Exogenous variable specifications
+exog = sm.add_constant(
+    np.log(
+        reg_df_nuts1.loc[
+            :, [
+                "total_inv", "total_emp", "total_rev", "total_newco", "total_activeco", "total_3yrco", "research_grants"
+            ]
+        ]
+    )
+)
+
+dep_var_1 = np.log(reg_df_nuts1.soc_1)
+dep_var_2 = np.log(reg_df_nuts1.soc_2)
+dep_var_3 = np.log(reg_df_nuts1.soc_3)
+dep_var_4 = np.log(reg_df_nuts1.soc_4)
+dep_var_5 = np.log(reg_df_nuts1.soc_5)
+dep_var_6 = np.log(reg_df_nuts1.soc_6)
+dep_var_7 = np.log(reg_df_nuts1.soc_7)
+dep_var_8 = np.log(reg_df_nuts1.soc_8)
+dep_var_9 = np.log(reg_df_nuts1.soc_9)
+dep_var_total = np.log(reg_df_nuts1.total_soc)
+
+
+# Fixed effect regressions
+reg_nuts1_fe1 = PanelOLS(
+    dep_var_1,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe2 = PanelOLS(
+    dep_var_2,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe3 = PanelOLS(
+    dep_var_3,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe4 = PanelOLS(
+    dep_var_4,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe5 = PanelOLS(
+    dep_var_5,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe6 = PanelOLS(
+    dep_var_6,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe7 = PanelOLS(
+    dep_var_7,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe8 = PanelOLS(
+    dep_var_8,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe9 = PanelOLS(
+    dep_var_9,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe_all = PanelOLS(
+    dep_var_total,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+
+# Print regression output tables
+print(
+    compare(
+        {
+         "SOC 1": reg_nuts1_fe1.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "SOC 2": reg_nuts1_fe2.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "SOC 3": reg_nuts1_fe3.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "SOC 4": reg_nuts1_fe4.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "SOC 5": reg_nuts1_fe5.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "SOC 6": reg_nuts1_fe6.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "SOC 7": reg_nuts1_fe7.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "SOC 8": reg_nuts1_fe8.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "SOC 9": reg_nuts1_fe9.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "All SOC": reg_nuts1_fe_all.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+        }, stars = True
+    )
+)
+```
+
+```{python}
+#| column: screen-inset-shaded
+import statsmodels.api as sm
+from linearmodels import PanelOLS
+from linearmodels.panel import compare
+warnings.filterwarnings("ignore")
+
+
+# Exogenous variable specifications
+exog = sm.add_constant(
+    np.log(reg_df_nuts1.loc[
+        :, [
+            "total_inv", "total_emp", "total_rev", "total_newco", "total_activeco", "total_3yrco", "research_grants"
+        ]
+    ])
+)
+
+dep_var_1 = reg_df_nuts1.soc_1.pct_change()
+dep_var_2 = reg_df_nuts1.soc_2.pct_change()
+dep_var_3 = reg_df_nuts1.soc_3.pct_change()
+dep_var_4 = reg_df_nuts1.soc_4.pct_change()
+dep_var_5 = reg_df_nuts1.soc_5.pct_change()
+dep_var_6 = reg_df_nuts1.soc_6.pct_change()
+dep_var_7 = reg_df_nuts1.soc_7.pct_change()
+dep_var_8 = reg_df_nuts1.soc_8.pct_change()
+dep_var_9 = reg_df_nuts1.soc_9.pct_change()
+dep_var_total = reg_df_nuts1.total_soc.pct_change()
+
+reg_nuts1_fe1 = PanelOLS(
+    dep_var_1,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe2 = PanelOLS(
+    dep_var_2,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe3 = PanelOLS(
+    dep_var_3,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe4 = PanelOLS(
+    dep_var_4,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe5 = PanelOLS(
+    dep_var_5,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe6 = PanelOLS(
+    dep_var_6,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe7 = PanelOLS(
+    dep_var_7,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe8 = PanelOLS(
+    dep_var_8,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe9 = PanelOLS(
+    dep_var_9,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+reg_nuts1_fe_all = PanelOLS(
+    dep_var_total,
+    exog,
+    entity_effects = True,
+    time_effects = True
+)
+
+print(
+    compare(
+        {
+         "SOC 1": reg_nuts1_fe1.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "SOC 2": reg_nuts1_fe2.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "SOC 3": reg_nuts1_fe3.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "SOC 4": reg_nuts1_fe4.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "SOC 5": reg_nuts1_fe5.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "SOC 6": reg_nuts1_fe6.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "SOC 7": reg_nuts1_fe7.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "SOC 8": reg_nuts1_fe8.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "SOC 9": reg_nuts1_fe9.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+         "All SOC": reg_nuts1_fe_all.fit(cov_type = 'clustered', cluster_entity = True, cluster_time = True),
+        }, stars = True
+    )
+)
+```
